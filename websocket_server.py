@@ -25,8 +25,14 @@ def serve(ws):
 
         # client disconnected
         if messageFromClient == None:
+
             clientList.remove(ws)
             print (f"ws - Client {ownId} left")
+
+            for peer in clientList:
+                newPeerNotice = {"peerLeft": {"id": clientIdCounter} }
+                peer.send(json.dumps(newPeerNotice))
+
             break
 
         print (f"ws - Message from client {ownId}: {messageFromClient}")

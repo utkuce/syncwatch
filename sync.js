@@ -1,5 +1,6 @@
 var client_id = -1;
-var receivedVideoState = "";
+var receivedState = "";
+var stopSending = false;
 
 // set video source
 var vid = document.getElementById("video1");
@@ -7,30 +8,18 @@ var vid = document.getElementById("video1");
 // get source from url
 var url = new URL(window.location.href);
 var video_src = url.searchParams.get("v"); // https://www.w3schools.com/html/mov_bbb.mp4
-var otaku_link = url.searchParams.get("o");
 
-var source = document.createElement('source');
-
-
-if (otaku_link != null) {
-
-    mylog("Otaku link: " + otaku_link);
-    printHTML(otaku_link);
-
-} else if (video_src != null) {
+if (video_src != null) {
 
     // video source from url
-    mylog("URL source: " + video_src);
-    source.setAttribute('src', video_src);
+    log("URL source: " + video_src);
+    vid.setAttribute('src', video_src);
 
 } else {
 
     // if no source in url
-    mylog("No video source in url, will request from server");
+    log("No video source in url, will request from server");
 }
-
-// add source to the video object
-vid.appendChild(source);
 
 // info text under the video
 setText(); // initial text
@@ -57,7 +46,7 @@ if ("WebSocket" in window) { // if the browser is supported
     ws.onopen = function (event) {
 
         ws_text.innerHTML = "Websocket connected"
-        mylog("Connecting to server");
+        log("Connecting to server");
         ws.send("Hello from new client");
     };
 
@@ -67,10 +56,10 @@ if ("WebSocket" in window) { // if the browser is supported
 
     ws.onmessage = function (event) {
 
-        mylog("Data received: " + event.data);
+        log("Data received: " + event.data);
         var message = JSON.parse(event.data);
         var messageType = Object.keys(message)[0];
-        
+
         switch (messageType) {
 
             case "connected":
@@ -78,28 +67,37 @@ if ("WebSocket" in window) { // if the browser is supported
                 // {"connected": {"assignedId": client_id}}
 
                 client_id = message["connected"]["assignedId"];
-                mylog("Client id set to " + client_id);
+                log("Client id set to " + client_id);
                 setText();
-                
+
                 break;
-            
+
             case "newPeer":
-            
+
                 // {"newPeer": {"id": peerId}}
 
                 var peerId = message["newPeer"]["id"];
-                mylog("New peer joined with id " + peerId);
-            
+                log("New peer joined with id " + peerId);
+
                 break;
-    
+
             case "videoState":
 
                 // { "videoState": { "position": vid.currentTime, "paused": vid.paused } }
-                
-                receivedVideoState = event.data;
+
+                receivedState = event.data;
+
+                // unless it's the start of a video and event will be fired 
+                //and we dont want to send it back and cause a loop
+                stopSending = true;
 
                 message["videoState"]["paused"] ? vid.pause() : vid.play();
                 vid.currentTime = parseFloat(message["videoState"]["position"]);
+
+                if (message["videoState"]["paused"] &&
+                    message["videoState"]["position"] === 0) {
+                    stopSending = false;
+                }
 
                 break;
 
@@ -119,10 +117,10 @@ if ("WebSocket" in window) { // if the browser is supported
 function setText() {
 
     document.getElementById("video_state").innerHTML = "Seconds: " + Math.floor(vid.currentTime) +
-                                                ", Paused: " + vid.paused +
-                                                ", Ready state: " + vid.readyState +
-                                                ", Seeking: " + vid.seeking;
-                                                //", Can play through: " + vid.canplaythrough;
+        ", Paused: " + vid.paused +
+        ", Ready state: " + vid.readyState +
+        ", Seeking: " + vid.seeking;
+    //", Can play through: " + vid.canplaythrough;
 
     document.getElementById("client_id").innerHTML = "Client ID: " + client_id;
 }
@@ -133,44 +131,34 @@ function getVideoState() {
 
 function sendSync() {
 
-    var vp = getVideoState();
+    var currentState = getVideoState();
 
-    if (vp !== receivedVideoState) { // don't send the received data back
+    if (!stopSending && (currentState !== receivedState)) { // don't send the received data back
 
-        mylog("Sending data: " + vp);
-        ws.send(vp);    
+        log("Sending data: " + currentState);
+        ws.send(currentState);
+
+    } /* else {
+
+        if (stopSending) {
+        
+            log("Event occured but not sending");
+            log ("Current state: " + currentState);
+            log("Received state: " + receivedState); 
+        }
+    
+    } */
+
+    // can start sending again if current state caught up with the last received state
+    if (currentState === receivedState) {
+        stopSending = false;
     }
 
     setText();
 }
 
-function mylog(text) {
+function log(text) {
 
     console.log(text);
     document.getElementById("logs").innerHTML += "<br>" + text;
-}
-
-function makeHttpObject() {
-    
-    try {return new XMLHttpRequest();}
-    catch (error) {}
-    try {return new ActiveXObject("Msxml2.XMLHTTP");}
-    catch (error) {}
-    try {return new ActiveXObject("Microsoft.XMLHTTP");}
-    catch (error) {}
-  
-    throw new Error("Could not create HTTP request object.");
-  }
-
-function printHTML(url) {
-
-    var request = makeHttpObject();
-    request.open("GET", url, true);
-    request.send(null);
-    request.onreadystatechange = function() {
-        if (request.readyState == 4) {
-            
-            console.log("HTML:" + request.responseText);
-        }
-    };
 }

@@ -1,6 +1,6 @@
-from subprocess import Popen
+from sys import argv
 import json
-from eventlet import wsgi, websocket, listen
+from eventlet import wsgi, websocket, listen, wrap_ssl
 
 clientIdCounter = 0
 clientList = set()
@@ -75,7 +75,23 @@ def serve(ws):
 
 if __name__ == '__main__':
 
+    # certificate files for wss
+    certDirs = open("cert_dirs.txt", "r").read()
+    certFile = json.loads(certDirs)["certFile"]
+    keyfile = json.loads(certDirs)["keyFile"]
+
+    print ("Cert file: " + certFile)
+    print ("Key file: " + keyfile)
+
     # websocket server
     # wait for connections in a loop
     while True:
-        wsgi.server(listen(('', 8001)), serve)
+        if len(argv) > 1 and argv[1] == "--no-ssl":
+            wsgi.server(listen(('', 8001)), serve)
+        else:
+            wsgi.server( wrap_ssl(  listen(('', 8001)),
+                                    certfile= certFile,
+                                    keyfile= keyfile,
+                                    server_side=True ) ,serve)
+
+

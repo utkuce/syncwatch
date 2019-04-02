@@ -40,7 +40,14 @@ textEvents.forEach(function (entry) {
 if ("WebSocket" in window) { // if the browser is supported
 
     // connect to websocket
-    var ws = new WebSocket("ws://" + window.location.hostname + ":8001/");
+    var prefix = "wss"
+    var address = window.location.hostname;
+    var port = "8001";
+
+    // non ssl for local development
+    prefix = address === "localhost" ? "ws" : prefix;
+
+    var ws = new WebSocket(prefix + "://" + address + ":" + port);
     var ws_text = document.getElementById("ws_text");
 
     ws.onopen = function (event) {

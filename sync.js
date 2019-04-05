@@ -119,7 +119,16 @@ if ("WebSocket" in window) { // if the browser is supported
 
                 // { "sourceURL": url}
                 vid.setAttribute("src", message["sourceURL"]);
-        }
+                
+                break;
+
+            case "newSource":
+                
+                // { "newSource" : {"url": url} }
+                vid.setAttribute("src", message["newSource"]["url"])
+                
+                break;
+            }
     };
 
 } else {
@@ -169,6 +178,28 @@ function sendSync() {
     }
 
     setText();
+}
+
+var urlBox = document.getElementById("url");
+
+urlBox.addEventListener("keyup", function(event) {    
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      document.getElementById("watchButton").click();
+    };
+}); 
+
+function newSource() {
+
+    var newSource = JSON.stringify({ "newSource": { "url": urlBox.value} });
+
+    log ("Loading new video from source: " + urlBox.value);
+    vid.setAttribute("src", urlBox.value);
+
+    log("Sending data: " + newSource)
+    ws.send(newSource);
+
+    urlBox.value = "";
 }
 
 function log(text) {

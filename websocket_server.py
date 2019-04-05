@@ -5,7 +5,7 @@ from eventlet import wsgi, websocket, listen, wrap_ssl
 clientIdCounter = 0
 clientList = set()
 
-lastSource = open("url.txt", "r").read()
+sourceURL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
 
 defaultVideoState = json.dumps({ "videoState": { "position": 0, "paused": True} })
 lastKnownState = defaultVideoState
@@ -15,7 +15,7 @@ def serve(ws):
 
     global clientIdCounter
     global lastKnownState
-    global lastSource
+    global sourceURL
     ownId = -1
 
     while True:
@@ -43,16 +43,16 @@ def serve(ws):
             print (f"ws - Connection established to client {clientIdCounter}")
             helloBack = {"connected": {"assignedId": clientIdCounter}}
             ws.send(json.dumps(helloBack))
-
+            '''
             # check if the source file changed
             newSource = open("url.txt", "r").read()
 
-            if newSource != lastSource:
+            if newSource != sourceURL:
                 lastKnownState = defaultVideoState
-                lastSource = newSource
-
+                sourceURL = newSource
+            '''
             # send the video link and state to the new client
-            ws.send(json.dumps({"sourceURL" : lastSource}))
+            ws.send(json.dumps({"sourceURL" : sourceURL}))
             ws.send(lastKnownState)
 
             # notify other clients of the new peer
@@ -66,7 +66,16 @@ def serve(ws):
 
         else: # pass the data to other clients
 
-            print (f"ws - Sending new video state to peers (originated from client {ownId})")
+            if "newSource" in messageFromClient:
+
+                print ("ws - Sending new video source to peers")
+                messageJSON = json.loads(messageFromClient)
+                sourceURL = messageJSON["newSource"]["url"]
+
+            else:
+            
+                print (f"ws - Sending new video state to peers (originated from client {ownId})")
+
             for peer in clientList:
                 if peer is not ws:
                     peer.send(messageFromClient)

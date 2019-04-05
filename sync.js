@@ -105,7 +105,21 @@ if ("WebSocket" in window) { // if the browser is supported
                 //and we dont want to send it back and cause a loop
                 stopSending = true;
 
-                message["videoState"]["paused"] ? vid.pause() : vid.play();
+                if (message["videoState"]["paused"]) {
+                
+                    vid.pause();
+                
+                } else {
+                    
+                    vid.play().catch(error => {
+                        if (error.name === "NotAllowedError") {
+                            log ("WARNING: have no permission to autoplay sound, muting video");
+                            vid.muted = true;
+                            vid.play();
+                        }  
+                    });                    
+                }
+                
                 vid.currentTime = parseFloat(message["videoState"]["position"]);
 
                 if (message["videoState"]["paused"] &&

@@ -98,6 +98,8 @@ if ("WebSocket" in window) { // if the browser is supported
                 var peerId = message["peerLeft"]["id"];
                 log("Peer " + peerId + " left");
 
+                break;
+
             case "videoState":
 
                 // { "videoState": { "position": vid.currentTime, "paused": vid.paused } }

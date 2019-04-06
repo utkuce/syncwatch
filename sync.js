@@ -153,10 +153,11 @@ if ("WebSocket" in window) { // if the browser is supported
 
 function setText() {
 
-    document.getElementById("video_state").innerHTML = "Seconds: " + Math.floor(vid.currentTime) +
+    document.getElementById("video_state").innerHTML = 
+        "Seconds: " + Math.floor(vid.currentTime) +
         ", Paused: " + vid.paused +
-        ", Ready state: " + vid.readyState +
-        ", Seeking: " + vid.seeking;
+        ", Ready state: " + vid.readyState;
+        //"<br>Seeking: " + vid.seeking;
     //", Can play through: " + vid.canplaythrough;
 
     document.getElementById("client_id").innerHTML = "Client ID: " + client_id;

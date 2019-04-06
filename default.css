@@ -11,10 +11,17 @@ video {
 }
 
 .logbox {
-	overflow-y: scroll; 
+	overflow-y: hidden; 
 	height:100px; 
 	display: flex; 
-	flex-direction: column-reverse
+	flex-direction: column-reverse;
+	position:absolute;
+	bottom:0;
+	max-width: 99%
+}
+
+.info {
+	float: left;
 }
 
 A:link {

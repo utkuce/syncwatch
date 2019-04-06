@@ -26,6 +26,10 @@ video {
 	min-width: 300px;
 }
 
+.warning {
+	color:orange
+}
+
 A:link {
 	text-decoration:underline;
 	font-weight:normal;

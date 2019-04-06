@@ -21,7 +21,7 @@ if (video_src != null) {
     log("No video source in url, will request from server");
 }
 
-// info text under the video
+// info text
 setText(); // initial text
 
 // add event listeners for the video state sync and text updates
@@ -116,7 +116,8 @@ if ("WebSocket" in window) { // if the browser is supported
                     
                     vid.play().catch(error => {
                         if (error.name === "NotAllowedError") {
-                            log ("WARNING: have no permission to autoplay sound, muting video");
+                            document.getElementById("muteWarning").innerHTML = 
+                                "<span class=warning>WARNING:</span> Have no permission to autoplay sound, muted video"
                             vid.muted = true;
                             vid.play();
                         }  

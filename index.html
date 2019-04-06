@@ -8,24 +8,29 @@
 </HEAD>
 
 <BODY class="body">
-	<section class="info">
-		<div>
-			<label for="mp4url">mp4 url: </label>
-			<input id="url" , placeholder="example.com/file.mp4">
-			<button id="watchButton" onclick="newSource()">Watch</button>
+
+	<div>
+		<div class="infobox">
+			<div>
+				<label for="mp4url">mp4 url: </label>
+				<input id="url" , placeholder="example.com/file.mp4">
+				<button id="watchButton" onclick="newSource()">Watch</button>
+			</div>
+			<div>
+				<p id="video_state"></p>
+				<p id="client_id"></p>
+				<p id="ws_text"></p>
+				<p id="muteWarning"></p>
+			</div>
 		</div>
-		<div>
-			<p id="video_state"></p>
-			<p id="client_id"></p>
-			<p id="ws_text"></p>
+		<div class=videobox>
+			<video id="video1" controls="" preload="auto">
+				<!--<source id="source1" src="" type="video/mp4">-->
+				Your browser does not support the video tag.
+			</video>
 		</div>
-	</section>
-	<div class=videoArea>
-		<video id="video1" controls="" preload="auto">
-			<!--<source id="source1" src="" type="video/mp4">-->
-			Your browser does not support the video tag.
-		</video>
 	</div>
+	
 	<p class=logbox id="logs"></p>
 	<!--<button onclick="vid.load()">Refresh Video</button>-->
 </BODY>

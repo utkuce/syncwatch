@@ -5,7 +5,8 @@ from eventlet import wsgi, websocket, listen, wrap_ssl
 clientIdCounter = 0
 clientList = set()
 
-sourceURL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+# default example src
+sourceURL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 
 defaultVideoState = json.dumps({ "videoState": { "position": 0, "paused": True} })
 lastKnownState = defaultVideoState
@@ -43,14 +44,7 @@ def serve(ws):
             print (f"ws - Connection established to client {clientIdCounter}")
             helloBack = {"connected": {"assignedId": clientIdCounter}}
             ws.send(json.dumps(helloBack))
-            '''
-            # check if the source file changed
-            newSource = open("url.txt", "r").read()
 
-            if newSource != sourceURL:
-                lastKnownState = defaultVideoState
-                sourceURL = newSource
-            '''
             # send the video link and state to the new client
             ws.send(json.dumps({"sourceURL" : sourceURL}))
             ws.send(lastKnownState)
@@ -84,23 +78,28 @@ def serve(ws):
 
 if __name__ == '__main__':
 
-    # certificate files for wss
-    certDirs = open("cert_dirs.txt", "r").read()
-    certFile = json.loads(certDirs)["certFile"]
-    keyfile = json.loads(certDirs)["keyFile"]
-
-    print ("Cert file: " + certFile)
-    print ("Key file: " + keyfile)
-
     # websocket server
     # wait for connections in a loop
     while True:
+    
         if len(argv) > 1 and argv[1] == "--no-ssl":
+    
             wsgi.server(listen(('', 8001)), serve)
+    
         else:
+    
+            # certificate files for wss
+            certDirs = open("cert_dirs.txt", "r").read()
+            # { "certFile" : "/path/to/cert", "keyFile" : "/path/to/key" }
+
+            certFile = json.loads(certDirs)["certFile"]
+            keyfile = json.loads(certDirs)["keyFile"]
+
+            print ("Cert file: " + certFile)
+            print ("Key file: " + keyfile)
+            
             wsgi.server( wrap_ssl(  listen(('', 8001)),
                                     certfile= certFile,
                                     keyfile= keyfile,
                                     server_side=True ) ,serve)
-
 

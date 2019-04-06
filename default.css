@@ -5,51 +5,34 @@ body {
 	font-size: 12px;
 }
 
-video {
-	width:1280px;
-	max-width:100%;
+.infobox {
+	float: left;
+	width: 406px;
 }
 
-.videoArea {
-	text-align: center
+.videobox {
+	width: 100%;
+	height: 100%;	
+
+	text-align: center;
+}
+
+video {
+	max-width: 100%;
+	max-height: 100%;
 }
 
 .logbox {
-	overflow-y: hidden; 
-	height:100px; 
 	display: flex; 
 	flex-direction: column-reverse;
-	position:absolute;
-	bottom:0;
-	max-width: 99%;
-	flex-grow: 1
-}	
+	overflow-y: hidden; 
 
-.info {
-	float: left;
-	min-width: 300px;
-}
+	height:100px; 
+	max-width: 99%;
+	position: absolute;
+	bottom: 0;
+}	
 
 .warning {
 	color:orange
-}
-
-A:link {
-	text-decoration:underline;
-	font-weight:normal;
-	color:#FFFF00;
-	font-size: 12px;
-}
-A:visited {
-	text-decoration:underline;
-	font-weight:normal;
-	color:#CCCCCC;
-	font-size: 12px;
-}
-A:hover   {text-decoration:underline;font-weight:normal;background:#0000FF;color:#FFFFFF}
-A:active {text-decoration:underline;font-weight:normal}
-undernote   {
-	font-family:"Avantgarde", "Helvetica", "Arial", "sans-serif";
-	font-size: 9px;
-	font-style: italic;
 }

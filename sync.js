@@ -46,6 +46,9 @@ if ("WebSocket" in window) { // if the browser is supported
 
     // non ssl for local development
     prefix = address === "localhost" ? "ws" : prefix;
+    prefix = address.startsWith("192.168.") ? "ws" : prefix;
+    prefix = address.startsWith("172.16.") ? "ws" : prefix;
+    prefix = address.startsWith("10.") ? "ws" : prefix;
 
     var ws = new WebSocket(prefix + "://" + address + ":" + port);
     var ws_text = document.getElementById("ws_text");

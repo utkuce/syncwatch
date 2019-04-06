@@ -10,6 +10,10 @@ video {
 	max-width:100%;
 }
 
+.videoArea {
+	text-align: center
+}
+
 .logbox {
 	overflow-y: hidden; 
 	height:100px; 

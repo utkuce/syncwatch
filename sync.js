@@ -207,8 +207,12 @@ function newSource() {
     urlBox.value = "";
 }
 
+function hideLog() {
+    document.getElementById("logbox").style.display = "none";
+}
+
 function log(text) {
 
     console.log(text);
-    document.getElementById("logs").innerHTML += text + "<br>";
+    document.getElementById("logs").innerHTML += "<br>" + text;
 }

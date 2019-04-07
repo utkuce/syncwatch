@@ -20,7 +20,7 @@ def serve(ws):
     global clientIdCounter
     global lastKnownState
     global sourceURL
-    ownId = -1
+    ownId = -1 # not assigned yet
 
     while True:
     
@@ -36,6 +36,10 @@ def serve(ws):
             for peer in [x[0] for x in clientList]:
                 peerLeftNotice = {"peerLeft": {"id": ownId} }
                 peer.send(json.dumps(peerLeftNotice))
+
+            # if nobody is left reset id counter
+            if len(clientList) == 0:
+                clientIdCounter = 0
 
             break
 

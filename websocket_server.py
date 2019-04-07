@@ -31,8 +31,8 @@ def serve(ws):
             print (f"ws - Client {ownId} left")
 
             for peer in clientList:
-                newPeerNotice = {"peerLeft": {"id": clientIdCounter} }
-                peer.send(json.dumps(newPeerNotice))
+                peerLeftNotice = {"peerLeft": {"id": ownId} }
+                peer.send(json.dumps(peerLeftNotice))
 
             break
 

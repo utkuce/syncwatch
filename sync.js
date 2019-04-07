@@ -5,22 +5,6 @@ var stopSending = false;
 // set video source
 var vid = document.getElementById("video1");
 
-// get source from url
-var url = new URL(window.location.href);
-var video_src = url.searchParams.get("v"); // https://www.w3schools.com/html/mov_bbb.mp4
-
-if (video_src != null) {
-
-    // video source from url
-    log("URL source: " + video_src);
-    vid.setAttribute('src', video_src);
-
-} else {
-
-    // if no source in url
-    log("No video source in url, will request from server");
-}
-
 // info text
 setText(); // initial text
 

@@ -2,7 +2,7 @@ body {
 	font-family: "Courier New", "Courier", "mono";
 	color:#FFFFFF;
 	background-color: #1C1C1C;
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .infobox {
@@ -22,17 +22,43 @@ video {
 	max-height: 100%;
 }
 
-.logbox {
-	display: flex; 
-	flex-direction: column-reverse;
-	overflow-y: hidden; 
-
-	height:100px; 
+.logs {
 	max-width: 99%;
+	height: 100px;
+
+	flex-direction: column-reverse;
+	display: flex; 
+	overflow-y: hidden; 
+}
+
+.logbox {
 	position: absolute;
 	bottom: 0;
-}	
+}
 
 .warning {
 	color:orange
 }
+
+button {
+	background-color: #4CAF50; /* Green */
+  	border: none;
+  	color: white;
+  	padding: 5px 10px;
+}
+
+input {
+  	border: none;
+  	padding: 5px 10px;
+}
+
+/*
+* {
+	border-style: solid;
+	border-color: red;
+	border-width: 1px;
+}
+*/
+
+
+

@@ -226,5 +226,5 @@ function newSource() {
 function log(text) {
 
     console.log(text);
-    document.getElementById("logs").innerHTML += "<br>" + text;
+    document.getElementById("logs").innerHTML += text + "<br>";
 }

@@ -2,8 +2,11 @@ from sys import argv
 import json
 from eventlet import wsgi, websocket, listen, wrap_ssl
 
+# last assigned id number
 clientIdCounter = 0
-clientList = set()
+
+# list of connected clients with a socket and id for each
+clientList = set() # [ (ws1,id1), (ws2,id2) ... ]
 
 # default example src
 sourceURL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
@@ -27,10 +30,10 @@ def serve(ws):
         # client disconnected
         if messageFromClient == None:
 
-            clientList.remove(ws)
+            clientList.remove((ws,ownId))
             print (f"ws - Client {ownId} left")
 
-            for peer in clientList:
+            for peer in [x[0] for x in clientList]:
                 peerLeftNotice = {"peerLeft": {"id": ownId} }
                 peer.send(json.dumps(peerLeftNotice))
 
@@ -48,15 +51,20 @@ def serve(ws):
             # send the video link and state to the new client
             ws.send(json.dumps({"sourceURL" : sourceURL}))
             ws.send(lastKnownState)
-
+            
+            # send a list of already connected clients to the newcomer
+            for peerId in [x[1] for x in clientList]:
+                alreadyPeer = {"newPeer": {"id": peerId} }
+                ws.send(json.dumps(alreadyPeer))
+            
             # notify other clients of the new peer
-            for peer in clientList:
+            for peer in [x[0] for x in clientList]:
                 newPeerNotice = {"newPeer": {"id": clientIdCounter} }
                 peer.send(json.dumps(newPeerNotice))
 
             ownId = clientIdCounter
             clientIdCounter += 1
-            clientList.add(ws)
+            clientList.add((ws,ownId))
 
         else: # pass the data to other clients
 
@@ -70,7 +78,7 @@ def serve(ws):
             
                 print (f"ws - Sending new video state to peers (originated from client {ownId})")
 
-            for peer in clientList:
+            for peer in [x[0] for x in clientList]:
                 if peer is not ws:
                     peer.send(messageFromClient)
 

@@ -6,6 +6,8 @@
 	<TITLE>Syncwatch</TITLE>
 	<link href="default.css" rel="stylesheet" type="text/css">
 	<link href="favicon.ico" type="image/x-icon" rel="icon" />
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+		integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 </HEAD>
 
 <BODY class="body">
@@ -17,12 +19,11 @@
 				<input id="url" , placeholder="example.com/file.mp4">
 				<button id="watchButton" onclick="newSource()">Watch</button>
 			</div>
-			<div>
-				<p id="video_state"></p>
-				<p id="client_id"></p>
-				<p id="ws_text"></p>
-				<p id="muteWarning"></p>
-			</div>
+			<p id="video_state"></p>
+			<p id="client_id"></p>
+			<p id="ws_text"></p>
+			<p id="muteWarning"></p>
+			<div id=avatars class=avatars></div>
 		</div>
 		<div class=videobox>
 			<video id="video1" controls="" preload="auto">
@@ -31,7 +32,7 @@
 			</video>
 		</div>
 	</div>
-		
+
 	<div id=logbox class=logbox>
 		<button id=hideButton class=hideButton onclick="hideLog()">
 			Hide Log <i class="fas fa-arrow-down"></i>
@@ -39,9 +40,16 @@
 		<p id=logs class=logs></p>
 	</div>
 	<!--<button onclick="vid.load()">Refresh Video</button>-->
+	<FOOTER>
+		© 2019 Utku Çelik<br>
+		Icon set "Fat Face" by
+		<a rel="nofollow" class="external text" href="https://www.iconfinder.com/danielross">PHDCo</a>
+		is licensed under
+		<a rel="nofollow" class="external text" href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>
+	</FOOTER>
 </BODY>
+
 
 </HTML>
 
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 <script type="text/javascript" src="sync.js"></script>

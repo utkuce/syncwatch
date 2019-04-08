@@ -62,7 +62,9 @@ if ("WebSocket" in window) { // if the browser is supported
 
                 client_id = message["connected"]["assignedId"];
                 log("Client id set to " + client_id);
+                
                 setText();
+                addClientFigure(client_id);
 
                 break;
 
@@ -73,6 +75,8 @@ if ("WebSocket" in window) { // if the browser is supported
                 var peerId = message["newPeer"]["id"];
                 log("New peer joined with id " + peerId);
 
+                addClientFigure(peerId);
+
                 break;
 
             case "peerLeft":
@@ -81,6 +85,8 @@ if ("WebSocket" in window) { // if the browser is supported
                 
                 var peerId = message["peerLeft"]["id"];
                 log("Peer " + peerId + " left");
+
+                removeClientFigure(peerId);
 
                 break;
 
@@ -196,15 +202,18 @@ urlBox.addEventListener("keyup", function(event) {
 
 function newSource() {
 
-    var newSource = JSON.stringify({ "newSource": { "url": urlBox.value} });
+    if (urlBox.value !== "") {
+    
+        var newSource = JSON.stringify({ "newSource": { "url": urlBox.value} });
 
-    log ("Loading new video from source: " + urlBox.value);
-    vid.setAttribute("src", urlBox.value);
-
-    log("Sending data: " + newSource)
-    ws.send(newSource);
-
-    urlBox.value = "";
+        log ("Loading new video from source: " + urlBox.value);
+        vid.setAttribute("src", urlBox.value);
+    
+        log("Sending data: " + newSource)
+        ws.send(newSource);
+    
+        urlBox.value = "";
+    }
 }
 
 function hideLog() {
@@ -215,4 +224,28 @@ function log(text) {
 
     console.log(text);
     document.getElementById("logs").innerHTML += "<br>" + text;
+}
+
+function addClientFigure(clientNumber) {
+  
+    var figure = document.createElement("figure");
+    figure.setAttribute("id", "figure" + clientNumber);
+    
+    var avatar = document.createElement("img");
+    avatar.setAttribute("src", "avatars/avatar" + Math.floor((Math.random() * 28)) + ".svg");
+    figure.setAttribute("width", "50px");
+       
+    var figcaption = document.createElement("figcaption");
+    figcaption.innerHTML = "Guest " + clientNumber;
+    figcaption.setAttribute("width", "50px");
+    
+    figure.appendChild(avatar);
+    figure.appendChild(figcaption);
+    
+    document.getElementById("avatars").appendChild(figure);
+}
+
+function removeClientFigure(clientNumber) {
+    log ("Removing avatar " + "figure" + clientNumber);
+    document.getElementById("figure" + clientNumber).remove();
 }

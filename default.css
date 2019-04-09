@@ -5,16 +5,31 @@ body {
 	font-size: 14px;
 }
 
-.infobox {
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #333;
+	text-align: right;
+  }
+  
+  li {
 	float: left;
-	max-width: 100%;
-	width: 20%;
-
-}
+  }
+  
+  li .info {
+	display: inline-block;
+	color: white;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+  }
 
 .videobox {
+	margin: 40px;
 	max-width: 100%;
-	height: 100%;	
+	max-height: 100%;
 	text-align: center;
 }
 
@@ -24,32 +39,9 @@ body {
 }
 
 video {
+	float: left;
 	max-width: 100%;
 	max-height: 100%;
-}
-
-@media only screen and (min-aspect-ratio: 16/9) {
-	video {
-		position: absolute;
-		top: 50%;
-		transform: translate(-50%,-50%);
-	}
-
-	.infobox {
-		height: 100%;
-		border-right: 1px solid rgba(112, 128, 144, 0.1);
-	}
-}
-
-@media only screen and (max-aspect-ratio: 16/9) {
-
-	.infobox {
-		width: 100%
-	}
-
-	figure {
-		max-width: 100px;
-	}
 }
 
 .logs {
@@ -62,14 +54,14 @@ video {
 }
 
 .avatars {
-	margin-top: 40px;
-	margin-bottom: 40px;
 	text-align: center;
+	max-width: 100%;
 }
 
 figure {
 	display: inline-block;
-	width: 40%;
+	width: 100%;
+	max-width: 150px;
 	margin: 0%;
 }
 
@@ -78,6 +70,7 @@ figure {
 }
 
 button {
+	direction: rtl;
 	background-color: #4CAF50; /* Green */
   	border: none;
   	color: white;
@@ -96,9 +89,10 @@ footer {
 	right: 2px;
 	text-align: right;
 	color: rgba(112, 128, 144, 0.5);
+	z-index: -1;
 }
 
-a {
+footer a {
 	color: rgba(112, 128, 144, 0.7);
 }
 
@@ -107,5 +101,4 @@ a {
 	border-style: solid;
 	border-color: red;
 	border-width: 1px;
-}
-*/
+}*/

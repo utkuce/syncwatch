@@ -12,26 +12,26 @@
 
 <body class="body">
 
-	<div>
-		<div class="infobox">
-			<div>
-				<label for="mp4url">mp4 url: </label>
-				<input id="url" , placeholder="example.com/file.mp4">
-				<button id="watchButton" onclick="newSource()">Watch</button>
-			</div>
-			<p id="video_state"></p>
-			<p id="client_id"></p>
-			<p id="ws_text"></p>
-			<p id="muteWarning"></p>
-			<div id=avatars class=avatars></div>
-		</div>
-		<div class=videobox>
-			<video id="video1" controls="" preload="auto">
-				<!--<source id="source1" src="" type="video/mp4">-->
-				Your browser does not support the video tag.
-			</video>
-		</div>
+	<ul>
+		<li><label class=info id="video_state"></label></li>
+		<li><label class=info id="client_id"></label></li>
+		<li><label class=info id="ws_text"></label></li>
+		<li>
+			<label class=info for="mp4url">mp4 url:</label>
+			<input id="url" , placeholder="example.com/file.mp4">
+			<button id="watchButton" onclick="newSource()">Watch</button>
+		</li>
+		<li><label class=info id="muteWarning"></label></li>
+	</ul>
+
+	<div class=videobox class=container>
+		<video id="video1" controls="" preload="auto">
+			<!--<source id="source1" src="" type="video/mp4">-->
+			Your browser does not support the video tag.
+		</video>
 	</div>
+
+	<div id=avatars class=avatars></div>
 
 	<div id=logbox class=logbox>
 		<button id=hideButton class=hideButton onclick="hideLog()">

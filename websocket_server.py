@@ -99,19 +99,26 @@ if __name__ == '__main__':
             wsgi.server(listen(('', 8001)), serve)
     
         else:
-    
-            # certificate files for wss
-            certDirs = open("cert_dirs.txt", "r").read()
-            # { "certFile" : "/path/to/cert", "keyFile" : "/path/to/key" }
 
-            certFile = json.loads(certDirs)["certFile"]
-            keyfile = json.loads(certDirs)["keyFile"]
+            try: 
+        
+                # certificate files for wss
+                certDirs = open("cert_dirs.txt", "r").read()
+                # { "certFile" : "/path/to/cert", "keyFile" : "/path/to/key" }
 
-            print ("Cert file: " + certFile)
-            print ("Key file: " + keyfile)
-            
-            wsgi.server( wrap_ssl(  listen(('', 8001)),
-                                    certfile= certFile,
-                                    keyfile= keyfile,
-                                    server_side=True ) ,serve)
+                certFile = json.loads(certDirs)["certFile"]
+                keyfile = json.loads(certDirs)["keyFile"]
+
+                print ("Cert file: " + certFile)
+                print ("Key file: " + keyfile)
+                
+                wsgi.server( wrap_ssl(  listen(('', 8001)),
+                                        certfile= certFile,
+                                        keyfile= keyfile,
+                                        server_side=True ) ,serve)
+            except TypeError as e:
+
+                if "GreenSSLSocket" in str(e):
+                    print ("Possible issue with ssl certificate, try with --no-ssl")
+                    exit()
 

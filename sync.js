@@ -197,7 +197,15 @@ urlBox.addEventListener("keyup", function(event) {
     // Number 13 is the "Enter" key on the keyboard
     if (event.keyCode === 13) {
       document.getElementById("watchButton").click();
-    };
+    }
+}); 
+
+addEventListener("keyup", function(event) {    
+    
+    // "K" key
+    if (event.keyCode === 75) {
+        vid.paused ? vid.play() : vid.pause();
+    }
 }); 
 
 function newSource() {

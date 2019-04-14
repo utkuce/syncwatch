@@ -1,4 +1,3 @@
-var client_id = -1;
 var receivedState = "";
 var stopSending = false;
 
@@ -14,132 +13,128 @@ textEvents.forEach(function (entry) {
     vid.addEventListener(entry, setText);
 });
 
-// websockets
-if ("WebSocket" in window) { // if the browser is supported
 
-    // connect to websocket
-    var prefix = "wss"
-    var address = window.location.hostname;
-    var port = "8001";
+// when message received
+ws.onmessage = function (event) {
 
-    // non ssl for local development
-    prefix = address === "localhost" ? "ws" : prefix;
-    prefix = address.startsWith("192.168.") ? "ws" : prefix;
-    prefix = address.startsWith("172.16.") ? "ws" : prefix;
-    prefix = address.startsWith("10.") ? "ws" : prefix;
+    log("Data received: " + event.data);
+    var message = JSON.parse(event.data);
+    var messageType = Object.keys(message)[0];
 
-    var ws = new WebSocket(prefix + "://" + address + ":" + port);
-    var ws_text = document.getElementById("ws_text");
+    switch (messageType) {
 
-    ws.onopen = function (event) {
+        case "connected":
 
-        ws_text.innerHTML = "Websocket connected"
-        log("Connecting to server");
-        ws.send("Hello from new client");
-    };
+            // {"connected": {"assignedId": client_id}}
 
-    ws.onclose = function (event) {
-        ws_text.innerHTML = "<span class=error>Websocket disconnected</span>"
-    };
+            client_id = message["connected"]["assignedId"];
+            log("Client id set to " + client_id);
+            
+            setText();
+            addClientFigure(client_id);
 
-    ws.onmessage = function (event) {
+            var username = getCookie("username");
+            if (username === "") {
 
-        log("Data received: " + event.data);
-        var message = JSON.parse(event.data);
-        var messageType = Object.keys(message)[0];
+                log("No username set, using default");
+                document.getElementById("username").innerHTML = "Connected as Guest " + client_id;
+            
+            } else {
 
-        switch (messageType) {
-
-            case "connected":
-
-                // {"connected": {"assignedId": client_id}}
-
-                client_id = message["connected"]["assignedId"];
-                log("Client id set to " + client_id);
                 
-                setText();
-                addClientFigure(client_id);
+                log("Username set: " + username);
+                document.getElementById("username").innerHTML = "Connected as " + username;
+                document.getElementById("figure" + client_id).getElementsByTagName("figcaption")[0].innerHTML = username;
+                sendName(username);
+            } 
 
-                break;
+            break;
 
-            case "newPeer":
+        case "newPeer":
 
-                // {"newPeer": {"id": peerId}}
+            // {"newPeer": {"id": peerId}}
 
-                var peerId = message["newPeer"]["id"];
-                log("New peer joined with id " + peerId);
+            var peerId = message["newPeer"]["id"];
+            log("New peer joined with id " + peerId);
 
-                addClientFigure(peerId);
+            addClientFigure(peerId);
 
-                break;
-
-            case "peerLeft":
-                
-                // {"peerLeft: {"id": peerId}
-                
-                var peerId = message["peerLeft"]["id"];
-                log("Peer " + peerId + " left");
-
-                removeClientFigure(peerId);
-
-                break;
-
-            case "videoState":
-
-                // { "videoState": { "position": vid.currentTime, "paused": vid.paused } }
-
-                receivedState = event.data;
-
-                // unless it's the start of a video and event will be fired 
-                //and we dont want to send it back and cause a loop
-                stopSending = true;
-
-                if (message["videoState"]["paused"]) {
-                
-                    vid.pause();
-                
-                } else {
-                    
-                    vid.play().catch(error => {
-                        if (error.name === "NotAllowedError") {
-                            document.getElementById("mute_warning").innerHTML = 
-                                "<span class=warning>WARNING:</span> Have no permission to autoplay sound, muted video"
-                            vid.muted = true;
-                            vid.play();
-                        }  
-                    });                    
-                }
-                
-                vid.currentTime = parseFloat(message["videoState"]["position"]);
-
-                if (message["videoState"]["paused"] &&
-                    message["videoState"]["position"] === 0) {
-                    stopSending = false;
-                }
-
-                break;
-
-            case "sourceURL":
-
-                // { "sourceURL": url}
-                vid.setAttribute("src", message["sourceURL"]);
-                
-                break;
-
-            case "newSource":
-                
-                // { "newSource" : {"url": url} }
-                vid.setAttribute("src", message["newSource"]["url"])
-                
-                break;
+            var username = getCookie("username");
+            if (username !== "") {
+                sendName(username);
             }
-    };
 
-} else {
+            break;
 
-    // The browser doesn't support WebSocket
-    alert("WebSocket NOT supported by your Browser!");
-}
+        case "peerLeft":
+            
+            // {"peerLeft: {"id": peerId}
+            
+            var peerId = message["peerLeft"]["id"];
+            log("Peer " + peerId + " left");
+
+            removeClientFigure(peerId);
+
+            break;
+
+        case "videoState":
+
+            // { "videoState": { "position": vid.currentTime, "paused": vid.paused } }
+
+            receivedState = event.data;
+
+            // unless it's the start of a video and event will be fired 
+            //and we dont want to send it back and cause a loop
+            stopSending = true;
+
+            if (message["videoState"]["paused"]) {
+            
+                vid.pause();
+            
+            } else {
+                
+                vid.play().catch(error => {
+                    if (error.name === "NotAllowedError") {
+                        document.getElementById("mute_warning").innerHTML = 
+                            "<span class=warning>WARNING:</span> Have no permission to autoplay sound, muted video"
+                        vid.muted = true;
+                        vid.play();
+                    }  
+                });                    
+            }
+            
+            vid.currentTime = parseFloat(message["videoState"]["position"]);
+
+            if (message["videoState"]["paused"] &&
+                message["videoState"]["position"] === 0) {
+                stopSending = false;
+            }
+
+            break;
+
+        case "sourceURL":
+
+            // { "sourceURL": url}
+            vid.setAttribute("src", message["sourceURL"]);
+            
+            break;
+
+        case "newSource":
+            
+            // { "newSource" : {"url": url} }
+            vid.setAttribute("src", message["newSource"]["url"])
+            
+            break;
+
+        case "peerName":
+
+            // {"peerName" : {"name": username, "peerId": id}}
+            var peerId = message["peerName"]["peerId"];
+            var peerName = message["peerName"]["name"];
+            log("peer id " + peerId + " is called " + peerName);
+            document.getElementById("figure" + peerId).getElementsByTagName("figcaption")[0].innerHTML = peerName;
+    }
+};
 
 function getVideoState() {
     return JSON.stringify({ "videoState": { "position": vid.currentTime, "paused": vid.paused } });

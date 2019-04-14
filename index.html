@@ -19,9 +19,15 @@
 		<li>
 			<label class=info for="mp4url">mp4 url:</label>
 			<input id="url" , placeholder="example.com/file.mp4">
-			<button id="watchButton" onclick="newSource()">Watch</button>
+			<button id="watch_button" onclick="newSource()">Watch</button>
 		</li>
 		<li><label class=info id="mute_warning"></label></li>
+		<li id="username_area">
+			<label class=info id="username"></label>
+			<button id="edit_username" onclick="editUsername()">
+				Edit <i class="fas fa-user-edit"></i>
+			</button>
+		</li>
 	</ul>
 
 	<div class=videobox class=container>
@@ -52,5 +58,6 @@
 
 </html>
 
+<script type="text/javascript" src="common.js"></script>
 <script type="text/javascript" src="interface.js"></script>
 <script type="text/javascript" src="sync.js"></script>

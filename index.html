@@ -21,17 +21,14 @@
 			<input id="url" , placeholder="example.com/file.mp4">
 			<button id="watchButton" onclick="newSource()">Watch</button>
 		</li>
-		<li><label class=info id="muteWarning"></label></li>
+		<li><label class=info id="mute_warning"></label></li>
 	</ul>
 
 	<div class=videobox class=container>
-		<video id="video1" controls="" preload="auto">
-			<!--<source id="source1" src="" type="video/mp4">-->
-			Your browser does not support the video tag.
-		</video>
+		<video id="video1" controls="" preload="auto"></video>
 	</div>
 
-	<div id=avatars class=avatars></div>
+	<div id=avatars></div>
 
 	<div id=logbox class=logbox>
 		<button id=hideButton class=hideButton onclick="hideLog()">

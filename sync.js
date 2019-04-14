@@ -39,7 +39,7 @@ if ("WebSocket" in window) { // if the browser is supported
     };
 
     ws.onclose = function (event) {
-        ws_text.innerHTML = "Websocket disconnected"
+        ws_text.innerHTML = "<span class=error>Websocket disconnected</span>"
     };
 
     ws.onmessage = function (event) {
@@ -102,7 +102,7 @@ if ("WebSocket" in window) { // if the browser is supported
                     
                     vid.play().catch(error => {
                         if (error.name === "NotAllowedError") {
-                            document.getElementById("muteWarning").innerHTML = 
+                            document.getElementById("mute_warning").innerHTML = 
                                 "<span class=warning>WARNING:</span> Have no permission to autoplay sound, muted video"
                             vid.muted = true;
                             vid.play();

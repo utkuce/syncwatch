@@ -60,7 +60,7 @@ video {
 	overflow-y: hidden; 
 }
 
-.avatars {
+#avatars {
 	text-align: center;
 	max-width: 100%;
 }
@@ -73,7 +73,11 @@ figure {
 }
 
 .warning {
-	color:orange
+	color:orange;
+}
+
+.error {
+	color:red;
 }
 
 button {

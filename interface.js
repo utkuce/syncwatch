@@ -1,8 +1,4 @@
-// set video source
-var vid = document.getElementById("video1");
 
-// set inital text
-setText();
 
 function addClientFigure(clientNumber) {
   
@@ -33,10 +29,11 @@ var urlBox = document.getElementById("url");
 urlBox.addEventListener("keyup", function(event) {    
     // Number 13 is the "Enter" key on the keyboard
     if (event.keyCode === 13) {
-      document.getElementById("watchButton").click();
+      document.getElementById("watch_button").click();
     }
 }); 
 
+/*
 addEventListener("keyup", function(event) {    
     
     // "K" key
@@ -44,6 +41,7 @@ addEventListener("keyup", function(event) {
         vid.paused ? vid.play() : vid.pause();
     }
 }); 
+*/
 
 function newSource() {
 
@@ -61,24 +59,53 @@ function newSource() {
     }
 }
 
-function setText() {
+// username
+var alreadyEditing = false;
+function editUsername() {
 
-    document.getElementById("video_state").innerHTML = 
-        "Seconds: " + Math.floor(vid.currentTime) +
-        ", Paused: " + vid.paused +
-        ", Ready state: " + vid.readyState;
-        //"<br>Seeking: " + vid.seeking;
-    //", Can play through: " + vid.canplaythrough;
+    if (!alreadyEditing) {
 
-    document.getElementById("client_id").innerHTML = "Client ID: " + client_id;
+        var usernameInput = document.createElement("input");
+        usernameInput.setAttribute("id", "username_input");
+        usernameInput.setAttribute("placeholder", "username");
+    
+        var usernameSetButton = document.createElement("button");
+        usernameSetButton.innerHTML = "Set <i class='fas fa-check'></i>";
+        usernameSetButton.setAttribute("id", "username_set");
+        usernameSetButton.setAttribute("onclick", "setUsername()");
+
+        usernameInput.addEventListener("keyup", function(event) {    
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                setUsername();
+            }
+        }); 
+    
+        var usernameArea = document.getElementById("username_area");
+        usernameArea.appendChild(usernameInput);
+        usernameArea.appendChild(usernameSetButton);
+
+        usernameInput.focus();
+    }
+
+    alreadyEditing = true;
 }
 
-function hideLog() {
-    document.getElementById("logbox").style.display = "none";
-}
+function setUsername() {
+    
+    var username = document.getElementById("username_input").value;
+    
+    if (username !== "") {
 
-function log(text) {
+        document.getElementById("username").innerHTML = "Connected as " + username;
+        document.getElementById("figure" + client_id).getElementsByTagName("figcaption")[0].innerHTML = username;
+        document.cookie = "username=" + username;
 
-    console.log(text);
-    document.getElementById("logs").innerHTML += "<br>" + text;
+        sendName(username);
+    }
+
+    document.getElementById("username_input").remove();
+    document.getElementById("username_set").remove();
+
+    alreadyEditing = false;
 }

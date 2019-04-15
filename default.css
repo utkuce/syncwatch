@@ -1,7 +1,7 @@
 body {
 	font-family: "Lucida Console", "Monaco", "monospace";
 	color:#EBEBEB;
-	background-color: #1C1C1C;
+	background-color: #21262d;;
 	font-size: 14px;
 }
 
@@ -10,7 +10,7 @@ ul {
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
-	background-color: #333;
+	background-color: #272e35;
 	text-align: right;
   }
   
@@ -41,6 +41,7 @@ ul {
   }
 
 .logbox {
+	display: none;
 	position: absolute;
 	bottom: 0;
 }

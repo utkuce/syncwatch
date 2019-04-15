@@ -80,7 +80,7 @@ def serve(ws):
 
             else:
             
-                print (f"ws - Sending new video state to peers (originated from client {ownId})")
+                print (f"ws - Forwarding client {ownId}'s message)")
 
             for peer in [x[0] for x in clientList]:
                 if peer is not ws:
@@ -121,4 +121,6 @@ if __name__ == '__main__':
                 if "GreenSSLSocket" in str(e):
                     print ("Possible issue with ssl certificate, try with --no-ssl")
                     exit()
+                else:
+                    raise e
 

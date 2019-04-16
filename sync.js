@@ -59,6 +59,10 @@ ws.onmessage = function (event) {
 
             addClientFigure(peerId);
 
+            var peerName = message["newPeer"]["name"];
+            if (peerName !== undefined) {
+                document.getElementById("figure" + peerId).getElementsByTagName("figcaption")[0].innerHTML = peerName;
+            }
 
             break;
 

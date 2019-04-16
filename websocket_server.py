@@ -9,6 +9,7 @@ clientIdCounter = 0
 
 # list of connected clients with a socket and id for each
 clientList = set() # [ (ws1,id1), (ws2,id2) ... ]
+clientNames = dict()
 
 # default example source
 sourceURL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
@@ -37,8 +38,9 @@ async def handler(ws, path):
     await ws.send(lastKnownState)
             
     # send a list of already connected clients to the newcomer
+    print ("WS - Sending a list of clients to new client")    
     for peerId in [x[1] for x in clientList]:
-        alreadyPeer = {"newPeer": {"id": peerId} }
+        alreadyPeer = {"newPeer": {"id": peerId, "name": clientNames[peerId]} }
         await ws.send(json.dumps(alreadyPeer))
             
     # notify other clients of the new peer
@@ -65,6 +67,16 @@ async def handler(ws, path):
                 messageJSON = json.loads(messageFromClient)
                 sourceURL = messageJSON["newSource"]["url"]
 
+            if "peerName" in messageFromClient:
+
+                messageJSON = json.loads(messageFromClient)
+                name = messageJSON["peerName"]["name"]
+                peerId = messageJSON["peerName"]["peerId"]
+
+                # update client with the new name
+                print (f"WS - Saving name {name} for client {clientId}")
+                clientNames[clientId] = name
+
             for peer in [x[0] for x in clientList]:
                 if peer is not ws:
                     await peer.send(messageFromClient)
@@ -90,6 +102,7 @@ async def handler(ws, path):
         if len(clientList) == 0:
             print ("WS - All clients left, resetting counter")
             clientIdCounter = 0
+            clientNames.clear()
 
 
 if __name__ == '__main__':

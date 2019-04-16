@@ -28,8 +28,7 @@ if ("WebSocket" in window) { // if the browser is supported
     ws.onopen = function (event) {
 
         ws_text.innerHTML = "Websocket connected"
-        log("Connecting to server");
-        ws.send("Hello from new client");
+        log("Connected to websocket server");
     };
 
     ws.onclose = function (event) {

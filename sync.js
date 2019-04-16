@@ -59,10 +59,6 @@ ws.onmessage = function (event) {
 
             addClientFigure(peerId);
 
-            var username = getCookie("username");
-            if (username !== "") {
-                sendName(username);
-            }
 
             break;
 

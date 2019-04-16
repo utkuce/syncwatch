@@ -96,7 +96,7 @@ input {
 }
 
 footer {
-	position: absolute;
+	position: fixed;
 	bottom: 2px;
 	right: 2px;
 	text-align: right;

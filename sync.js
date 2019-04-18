@@ -131,7 +131,8 @@ ws.onmessage = function (event) {
             // {"peerName" : {"name": username, "peerId": id}}
             var peerId = message["peerName"]["peerId"];
             var peerName = message["peerName"]["name"];
-            log("peer id " + peerId + " is called " + peerName);
+            log("Peer with id " + peerId + " is called " + peerName);
+            log("Updating UI for peer " + peerId);
             document.getElementById("figure" + peerId).getElementsByTagName("figcaption")[0].innerHTML = peerName;
     }
 };

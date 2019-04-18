@@ -34,23 +34,26 @@ async def handler(ws, path):
     # send the video link and state to the new client
     print ("WS - Sending video source to new client")
     await ws.send(json.dumps({"sourceURL" : sourceURL}))
-    print ("WS - Sending video state to new client")    
+    print (f"WS - Sending video state to new client {lastKnownState}")    
     await ws.send(lastKnownState)
             
     # send a list of already connected clients to the newcomer
-    print ("WS - Sending a list of clients to new client")    
-    for peerId in [x[1] for x in clientList]:
-        alreadyPeer = {"newPeer": {"id": peerId, "name": clientNames[peerId]} }
-        await ws.send(json.dumps(alreadyPeer))
-            
+    if (len(clientList) is not 0):
+        print (f"WS - Sending a list of clients to new client ({clientNames})")    
+        for peerId in [x[1] for x in clientList]:
+            alreadyPeer = {"newPeer": {"id": peerId, "name": clientNames[peerId]} }
+            await ws.send(json.dumps(alreadyPeer))
+
     # notify other clients of the new peer
     for peer in [x[0] for x in clientList]:
         newPeerNotice = {"newPeer": {"id": clientIdCounter} }
         await peer.send(json.dumps(newPeerNotice))
 
+    # add new client to the list
     clientId = clientIdCounter
     clientIdCounter += 1
     clientList.add((ws,clientId))
+    clientNames[clientId] = "Guest " + str(clientId)
 
     try:
 
@@ -74,14 +77,15 @@ async def handler(ws, path):
                 peerId = messageJSON["peerName"]["peerId"]
 
                 # update client with the new name
-                print (f"WS - Saving name {name} for client {clientId}")
+                print (f"WS - Saving the name \"{name}\" for client {clientId}")
                 clientNames[clientId] = name
 
             for peer in [x[0] for x in clientList]:
                 if peer is not ws:
                     await peer.send(messageFromClient)
 
-            lastKnownState = messageFromClient
+            if "videoState" in messageFromClient:
+                lastKnownState = messageFromClient
 
     except websockets.exceptions.ConnectionClosed:
 
@@ -90,9 +94,10 @@ async def handler(ws, path):
     finally:
 
         # END OF CONNECTION
-        
+    
+        print (f"WS - Removing Client {clientId} ({clientNames[clientId]}) from list")
         clientList.remove((ws,clientId))
-        print (f"WS - Client {clientId} removed from list")
+        del clientNames[clientId]    
 
         for peer in [x[0] for x in clientList]:
             peerLeftNotice = {"peerLeft": {"id": clientId} }

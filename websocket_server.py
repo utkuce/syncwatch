@@ -4,6 +4,12 @@ import json
 import asyncio
 import websockets
 
+from time import gmtime, strftime
+
+def log(message):
+    time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    print(f"WS - {time} - {message}")
+
 # last assigned id number
 clientIdCounter = 0
 
@@ -27,19 +33,19 @@ async def handler(ws, path):
     ### NEW CONNECTION
 
     # assign new client an id
-    print (f"WS - Connection established to client {clientIdCounter}")
+    log(f"Connection established to client {clientIdCounter}")
     welcomeMessage = {"connected": {"assignedId": clientIdCounter}}
     await ws.send(json.dumps(welcomeMessage))
 
     # send the video link and state to the new client
-    print ("WS - Sending video source to new client")
+    log("Sending video source to new client")
     await ws.send(json.dumps({"sourceURL" : sourceURL}))
-    print (f"WS - Sending video state to new client {lastKnownState}")    
+    log(f"Sending video state to new client {lastKnownState}")    
     await ws.send(lastKnownState)
             
     # send a list of already connected clients to the newcomer
     if (len(clientList) is not 0):
-        print (f"WS - Sending a list of clients to new client ({clientNames})")    
+        log(f"Sending a list of clients to new client ({clientNames})")    
         for peerId in [x[1] for x in clientList]:
             alreadyPeer = {"newPeer": {"id": peerId, "name": clientNames[peerId]} }
             await ws.send(json.dumps(alreadyPeer))
@@ -63,7 +69,7 @@ async def handler(ws, path):
 
             messageFromClient = await ws.recv()
 
-            print (f"WS - Message from client {clientId}: {messageFromClient}")
+            log(f"Message from client {clientId}: {messageFromClient}")
 
             if "newSource" in messageFromClient:
 
@@ -77,7 +83,7 @@ async def handler(ws, path):
                 peerId = messageJSON["peerName"]["peerId"]
 
                 # update client with the new name
-                print (f"WS - Saving the name \"{name}\" for client {clientId}")
+                log(f"Saving the name \"{name}\" for client {clientId}")
                 clientNames[clientId] = name
 
             for peer in [x[0] for x in clientList]:
@@ -89,13 +95,13 @@ async def handler(ws, path):
 
     except websockets.exceptions.ConnectionClosed:
 
-        print (f"WS - Connection to Client {clientId} is closed")
+        log(f"Connection to Client {clientId} is closed")
 
     finally:
 
         # END OF CONNECTION
     
-        print (f"WS - Removing Client {clientId} ({clientNames[clientId]}) from list")
+        log(f"Removing Client {clientId} ({clientNames[clientId]}) from list")
         clientList.remove((ws,clientId))
         del clientNames[clientId]    
 
@@ -105,14 +111,14 @@ async def handler(ws, path):
 
         # if nobody is left reset id counter
         if len(clientList) == 0:
-            print ("WS - All clients left, resetting counter")
+            log("All clients left, resetting counter")
             clientIdCounter = 0
             clientNames.clear()
 
 
 if __name__ == '__main__':
 
-    print ("WS - Starting websocket server")
+    log("Starting websocket server")
 
     if len(argv) > 1 and argv[1] == "--no-ssl":
     

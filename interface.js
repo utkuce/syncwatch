@@ -97,7 +97,7 @@ function setUsername() {
     
     if (username !== "") {
 
-        document.getElementById("username").innerHTML = "Connected as " + username;
+        document.getElementById("username").innerHTML = "Connected as <u>" + username + "</u>";
         document.getElementById("figure" + client_id).getElementsByTagName("figcaption")[0].innerHTML = username;
         document.cookie = "username=" + username;
 

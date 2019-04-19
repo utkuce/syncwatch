@@ -1,9 +1,9 @@
-var url = new URL(window.location.href);
+var url = new URL(window.location);
 
 var roomId;
 if (roomId = url.searchParams.get("r")) {
 
-    document.getElementById("room_link").innerHTML = window.location + ' <i class="far fa-copy"></i>';
+    document.getElementById("room_link").innerHTML = "Room ID: <u>" + roomId + "</u>";
 
 } else {
 

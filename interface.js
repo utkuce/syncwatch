@@ -109,3 +109,8 @@ function setUsername() {
 
     alreadyEditing = false;
 }
+
+function copyRoomLink() {
+
+    navigator.clipboard.writeText(location.href);
+}

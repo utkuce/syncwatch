@@ -1,3 +1,21 @@
+var url = new URL(window.location.href);
+
+var roomId;
+if (roomId = url.searchParams.get("r")) {
+
+    document.getElementById("room_link").innerHTML = window.location + ' <i class="far fa-copy"></i>';
+
+} else {
+
+    // if there is no room in url create one
+    roomId = makeId(5);
+    url.searchParams.append("r", roomId);
+    window.location.replace(url);
+}
+
+log("Joining room " + roomId);
+
+// client id given by server, -1 if not assigned
 var client_id = -1;
 
 // set video source
@@ -88,3 +106,7 @@ function log(text) {
     console.log(text);
     document.getElementById("logs").innerHTML += "<br>" + text;
 }
+
+function makeId(length) {
+    return Math.random().toString(36).substring(length);
+  }

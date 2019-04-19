@@ -112,5 +112,17 @@ function setUsername() {
 
 function copyRoomLink() {
 
-    navigator.clipboard.writeText(location.href);
+    navigator.clipboard.writeText(location.href).then(function() {
+        
+        /* clipboard successfully set */
+        log ("Room link copied to clipboard");
+      
+    }, function() {
+        
+        // clipboard write failed
+        log ("Failed to the copy room link to clipboard");    
+        document.getElementById("copy_warning").innerHTML = 
+            "<span class=warning>WARNING:</span> Have no permission to write to clipboard"
+    });
+
 }

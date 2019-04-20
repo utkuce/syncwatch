@@ -53,7 +53,12 @@ async def handler(ws, path):
             if roomId == "request":
                 # create new room
                 
-                roomId = secrets.token_hex(3)
+                while True:
+                    roomId = secrets.token_hex(3)
+                    # make sure the random id doesnt already exist
+                    if roomId not in roomsList:
+                        break
+
                 log(f"Creating new room: {roomId}")
                 roomsList[roomId] = Room(id=roomId)
                 await ws.send(json.dumps({"roomId" : roomId}))

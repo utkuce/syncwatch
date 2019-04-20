@@ -12,7 +12,7 @@
 
 <body class="body">
 
-	<ul>
+	<ul id=top_bar>
 		<li><label class=info id="video_state"></label></li>
 		<li><label class=info id="client_id"></label></li>
 		<li><label class=info id="ws_text"></label></li>
@@ -60,6 +60,12 @@
 
 </body>
 
+	<div id=no_room>
+		<p id=no_room_mesg></p>
+		<p>
+			<button onclick="newRoom()">New Room <i class="fas fa-plus"></i></button>
+		</p>
+	</div>
 
 </html>
 

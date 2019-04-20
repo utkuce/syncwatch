@@ -147,6 +147,23 @@ ws.onmessage = function (event) {
             if (history.pushState) {
                 window.history.pushState("object or string", "Title", url);
             } 
+
+            break;
+
+        case "error":
+
+            if (message["error"] === "no_room") {
+
+                vid.style.visibility = "hidden"; 
+                document.getElementById("top_bar").style.visibility = "hidden";
+    
+                document.getElementById("no_room").style.display = "block";
+                document.getElementById("no_room_mesg").innerHTML = 
+                    "There is no room on the server with the requested id <u>" + room_id + 
+                    "</u>. Would you like a fresh new one from the oven?"
+            }
+
+            break;
     }
 };
 

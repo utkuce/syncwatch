@@ -51,10 +51,17 @@ async def handler(ws, path):
             log (f"Room id received {roomId}")
 
             if roomId == "request":
+                # create new room
+                
                 roomId = secrets.token_hex(3)
                 log(f"Creating new room: {roomId}")
                 roomsList[roomId] = Room(id=roomId)
                 await ws.send(json.dumps({"roomId" : roomId}))
+
+            elif roomId not in roomsList:
+                # client requested nonexistent room
+                await ws.send(json.dumps({"error": "no_room"}))
+                continue
 
             # add client to room
             clientRoom = roomsList[roomId]

@@ -110,6 +110,11 @@ footer a {
 	color: rgba(112, 128, 144, 0.7);
 }
 
+#no_room {
+	display: none;
+	max-width: 100%;
+}
+
 /*
 * {
 	border-style: solid;

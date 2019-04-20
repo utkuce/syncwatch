@@ -112,7 +112,7 @@ function setUsername() {
 
 function copyRoomLink() {
 
-    navigator.clipboard.writeText(location.href).then(function() {
+    navigator.clipboard.writeText(url).then(function() {
         
         /* clipboard successfully set */
         log ("Room link copied to clipboard");

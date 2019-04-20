@@ -1,19 +1,7 @@
 var url = new URL(window.location);
 
-var roomId;
-if (roomId = url.searchParams.get("r")) {
-
-    document.getElementById("room_link").innerHTML = "Room ID: <u>" + roomId + "</u>";
-
-} else {
-
-    // if there is no room in url create one
-    roomId = makeId(5);
-    url.searchParams.append("r", roomId);
-    window.location.replace(url);
-}
-
-log("Joining room " + roomId);
+// room id from url or from server if url is empty
+var room_id = -1;
 
 // client id given by server, -1 if not assigned
 var client_id = -1;
@@ -47,6 +35,9 @@ if ("WebSocket" in window) { // if the browser is supported
 
         ws_text.innerHTML = "Websocket connected"
         log("Connected to websocket server");
+        
+        log("Setting room id");
+        setRoomId();
     };
 
     ws.onclose = function (event) {
@@ -109,4 +100,19 @@ function log(text) {
 
 function makeId(length) {
     return Math.random().toString(36).substring(length);
-  }
+}
+
+function setRoomId() {
+
+    if (room_id = url.searchParams.get("r")) {
+
+        // request to join the room in url
+        document.getElementById("room_link").innerHTML = "Room ID: <u>" + room_id + "</u>";
+        ws.send(JSON.stringify({"roomId": room_id}));
+    
+    } else {
+    
+        // if there is no room in url request new room
+        ws.send(JSON.stringify({"roomId": "request"}));
+    }
+}

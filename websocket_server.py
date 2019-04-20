@@ -1,65 +1,95 @@
-from sys import argv
 import ssl
 import json
 import asyncio
 import websockets
 
-from time import gmtime, strftime
+from sys import argv # for --no-ssl
+from time import gmtime, strftime # for log timestamps
+import secrets # for random room id
 
 def log(message):
     time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     print(f"WS - {time} - {message}")
 
-# last assigned id number
-clientIdCounter = 0
+roomsList = dict()
 
-# list of connected clients with a socket and id for each
-clientList = set() # [ (ws1,id1), (ws2,id2) ... ]
-clientNames = dict()
+class Room: 
 
-# default example source
-sourceURL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+    def __init__(self, id):
+       
+        self.id = id
 
-defaultVideoState = json.dumps({ "videoState": { "position": 0, "paused": True} })
-lastKnownState = defaultVideoState
+        # last assigned id number
+        self.clientIdCounter = 0
 
+        # list of connected clients with a socket and id for each
+        self.clientList = set() # [ (ws1,id1), (ws2,id2) ... ]
+        self.clientNames = dict()
+
+        # default example source
+        self.sourceURL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+
+        self.defaultVideoState = json.dumps({ "videoState": { "position": 0, "paused": True} })
+        self.lastKnownState = self.defaultVideoState
+
+
+# everything in the handler function is the bidirectional 
+# communication of a single client with the ws server
 async def handler(ws, path):
 
-    global clientIdCounter
-    global lastKnownState
-    global sourceURL
     clientId = -1 # not assigned yet
-    
+    clientRoom = None
+
     ### NEW CONNECTION
 
+    # wait until client requests room
+    while clientRoom is None:
+        firstMessage = await ws.recv()
+        if "roomId" in firstMessage:
+            
+            roomId = json.loads(firstMessage)["roomId"]
+            log (f"Room id received {roomId}")
+
+            if roomId == "request":
+                roomId = secrets.token_hex(3)
+                log(f"Creating new room: {roomId}")
+                roomsList[roomId] = Room(id=roomId)
+                await ws.send(json.dumps({"roomId" : roomId}))
+
+            # add client to room
+            clientRoom = roomsList[roomId]
+
     # assign new client an id
-    log(f"Connection established to client {clientIdCounter}")
-    welcomeMessage = {"connected": {"assignedId": clientIdCounter}}
+    log(f"Connection established to client {clientRoom.clientIdCounter} (Room: {clientRoom.id})")
+    welcomeMessage = {"connected": {"assignedId": clientRoom.clientIdCounter}}
     await ws.send(json.dumps(welcomeMessage))
 
     # send the video link and state to the new client
     log("Sending video source to new client")
-    await ws.send(json.dumps({"sourceURL" : sourceURL}))
-    log(f"Sending video state to new client {lastKnownState}")    
-    await ws.send(lastKnownState)
+    await ws.send(json.dumps({"sourceURL" : clientRoom.sourceURL}))
+    log(f"Sending video state to new client {clientRoom.lastKnownState}")    
+    await ws.send(clientRoom.lastKnownState)
             
     # send a list of already connected clients to the newcomer
-    if (len(clientList) is not 0):
-        log(f"Sending a list of clients to new client ({clientNames})")    
-        for peerId in [x[1] for x in clientList]:
-            alreadyPeer = {"newPeer": {"id": peerId, "name": clientNames[peerId]} }
+    if (len(clientRoom.clientList) is not 0):
+        log(f"Sending a list of clients to new client ({clientRoom.clientNames})")    
+        for peerId in [x[1] for x in clientRoom.clientList]:
+            alreadyPeer = {"newPeer": {"id": peerId, "name": clientRoom.clientNames[peerId]} }
             await ws.send(json.dumps(alreadyPeer))
 
     # notify other clients of the new peer
-    for peer in [x[0] for x in clientList]:
-        newPeerNotice = {"newPeer": {"id": clientIdCounter} }
+    for peer in [x[0] for x in clientRoom.clientList]:
+        newPeerNotice = {"newPeer": {"id": clientRoom.clientIdCounter} }
         await peer.send(json.dumps(newPeerNotice))
 
     # add new client to the list
-    clientId = clientIdCounter
-    clientIdCounter += 1
-    clientList.add((ws,clientId))
-    clientNames[clientId] = "Guest " + str(clientId)
+    clientId = clientRoom.clientIdCounter
+    clientRoom.clientIdCounter += 1
+    clientRoom.clientList.add((ws,clientId))
+    
+    # new client is referred to as a guest with client id
+    # until it sends its username
+    clientRoom.clientNames[clientId] = "Guest " + str(clientId)
 
     try:
 
@@ -72,11 +102,13 @@ async def handler(ws, path):
             log(f"Message from client {clientId}: {messageFromClient}")
 
             if "newSource" in messageFromClient:
+            # client changed video source, forward info to peers
 
                 messageJSON = json.loads(messageFromClient)
-                sourceURL = messageJSON["newSource"]["url"]
+                clientRoom.sourceURL = messageJSON["newSource"]["url"]
 
             if "peerName" in messageFromClient:
+            # client changed their username, forward info to peers
 
                 messageJSON = json.loads(messageFromClient)
                 name = messageJSON["peerName"]["name"]
@@ -84,14 +116,15 @@ async def handler(ws, path):
 
                 # update client with the new name
                 log(f"Saving the name \"{name}\" for client {clientId}")
-                clientNames[clientId] = name
+                clientRoom.clientNames[clientId] = name
 
-            for peer in [x[0] for x in clientList]:
+            for peer in [x[0] for x in clientRoom.clientList]:
                 if peer is not ws:
                     await peer.send(messageFromClient)
 
+            # client changed video state, forward info to peers
             if "videoState" in messageFromClient:
-                lastKnownState = messageFromClient
+                clientRoom.lastKnownState = messageFromClient
 
     except websockets.exceptions.ConnectionClosed:
 
@@ -101,19 +134,19 @@ async def handler(ws, path):
 
         # END OF CONNECTION
     
-        log(f"Removing Client {clientId} ({clientNames[clientId]}) from list")
-        clientList.remove((ws,clientId))
-        del clientNames[clientId]    
+        log(f"Removing Client {clientId} ({clientRoom.clientNames[clientId]}) from list")
+        clientRoom.clientList.remove((ws,clientId))
+        del clientRoom.clientNames[clientId]    
 
-        for peer in [x[0] for x in clientList]:
+        for peer in [x[0] for x in clientRoom.clientList]:
             peerLeftNotice = {"peerLeft": {"id": clientId} }
             await peer.send(json.dumps(peerLeftNotice))
 
         # if nobody is left reset id counter
-        if len(clientList) == 0:
+        if len(clientRoom.clientList) == 0:
             log("All clients left, resetting counter")
-            clientIdCounter = 0
-            clientNames.clear()
+            clientRoom.clientIdCounter = 0
+            clientRoom.clientNames.clear()
 
 
 if __name__ == '__main__':

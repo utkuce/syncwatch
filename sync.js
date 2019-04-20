@@ -134,6 +134,19 @@ ws.onmessage = function (event) {
             log("Peer with id " + peerId + " is called " + peerName);
             log("Updating UI for peer " + peerId);
             document.getElementById("figure" + peerId).getElementsByTagName("figcaption")[0].innerHTML = peerName;
+
+            break;
+
+        case "roomId":
+
+            room_id = message["roomId"];
+            log ("Joined room " + room_id);
+            url.searchParams.append("r", room_id);
+            document.getElementById("room_link").innerHTML = "Room ID: <u>" + room_id + "</u>";
+
+            if (history.pushState) {
+                window.history.pushState("object or string", "Title", url);
+            } 
     }
 };
 

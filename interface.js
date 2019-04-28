@@ -1,12 +1,10 @@
-
-
-function addClientFigure(clientNumber) {
+function addClientFigure(clientNumber, avatarNumber) {
   
     var figure = document.createElement("figure");
     figure.setAttribute("id", "figure" + clientNumber);
     
     var avatar = document.createElement("img");
-    avatar.setAttribute("src", "avatars/avatar" + Math.floor((Math.random() * 28)) + ".svg");
+    avatar.setAttribute("src", "avatars/avatar" + avatarNumber + ".svg");
     figure.setAttribute("width", "50px");
        
     var figcaption = document.createElement("figcaption");

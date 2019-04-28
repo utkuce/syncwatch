@@ -25,13 +25,14 @@ ws.onmessage = function (event) {
 
         case "connected":
 
-            // {"connected": {"assignedId": client_id}}
+            // {"connected": {"assignedId": client_id, "assignedAvatar", avatar}}
 
             client_id = message["connected"]["assignedId"];
+            var avatar = message["connected"]["assignedAvatar"]
             log("Client id set to " + client_id);
             
             setText();
-            addClientFigure(client_id);
+            addClientFigure(client_id, avatar);
 
             var username = getCookie("username");
             if (username === "") {
@@ -52,12 +53,13 @@ ws.onmessage = function (event) {
 
         case "newPeer":
 
-            // {"newPeer": {"id": peerId}}
+            // {"newPeer": {"id": peerId, "name": peerName, "avatar": peerAvatar}}
 
             var peerId = message["newPeer"]["id"];
             log("New peer joined with id " + peerId);
 
-            addClientFigure(peerId);
+            var peerAvatar = message["newPeer"]["avatar"];
+            addClientFigure(peerId, peerAvatar);
 
             var peerName = message["newPeer"]["name"];
             if (peerName !== undefined) {

@@ -6,6 +6,7 @@ import websockets
 from sys import argv # for --no-ssl
 from time import gmtime, strftime # for log timestamps
 import secrets # for random room id
+from random import randint # for random avatar number
 
 def log(message):
     time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
@@ -25,6 +26,7 @@ class Room:
         # list of connected clients with a socket and id for each
         self.clientList = set() # [ (ws1,id1), (ws2,id2) ... ]
         self.clientNames = dict()
+        self.clientAvatars = dict()
 
         # default example source
         self.sourceURL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
@@ -71,9 +73,12 @@ async def handler(ws, path):
             # add client to room
             clientRoom = roomsList[roomId]
 
-    # assign new client an id
+    # assign new client an id and avatar
     log(f"Connection established to client {clientRoom.clientIdCounter} (Room: {clientRoom.id})")
-    welcomeMessage = {"connected": {"assignedId": clientRoom.clientIdCounter}}
+    randomAvatar = randint(0, 27)
+    log(f"Selected avatar {randomAvatar} for the new client")
+    clientRoom.clientAvatars[clientRoom.clientIdCounter] = randomAvatar
+    welcomeMessage = {"connected": {"assignedId": clientRoom.clientIdCounter, "assignedAvatar": randomAvatar}}
     await ws.send(json.dumps(welcomeMessage))
 
     # send the video link and state to the new client
@@ -86,12 +91,12 @@ async def handler(ws, path):
     if (len(clientRoom.clientList) is not 0):
         log(f"Sending a list of clients to new client ({clientRoom.clientNames})")    
         for peerId in [x[1] for x in clientRoom.clientList]:
-            alreadyPeer = {"newPeer": {"id": peerId, "name": clientRoom.clientNames[peerId]} }
+            alreadyPeer = {"newPeer": {"id": peerId, "name": clientRoom.clientNames[peerId], "avatar": clientRoom.clientAvatars[peerId]} }
             await ws.send(json.dumps(alreadyPeer))
 
     # notify other clients of the new peer
     for peer in [x[0] for x in clientRoom.clientList]:
-        newPeerNotice = {"newPeer": {"id": clientRoom.clientIdCounter} }
+        newPeerNotice = {"newPeer": {"id": clientRoom.clientIdCounter, "avatar": randomAvatar} }
         await peer.send(json.dumps(newPeerNotice))
 
     # add new client to the list

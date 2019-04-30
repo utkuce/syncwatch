@@ -1,1 +1,2 @@
-cert_dirs.txt
+__pycache__/
+syncwatch.db

@@ -26,7 +26,7 @@ def initialize():
     cursor.execute('''
                 
                     CREATE TABLE IF NOT EXISTS users (
-                        id INTEGER PRIMARY KEY, 
+                        id INTEGER, 
                         room TEXT, 
                         name TEXT, 
                         avatar INTEGER

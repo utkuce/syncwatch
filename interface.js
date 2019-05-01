@@ -48,12 +48,22 @@ function newSource() {
         var newSource = JSON.stringify({ "newSource": { "url": urlBox.value} });
 
         log ("Loading new video from source: " + urlBox.value);
-        vid.setAttribute("src", urlBox.value);
+
+        setSource(urlBox.value);
     
         log("Sending data: " + newSource)
         ws.send(newSource);
     
         urlBox.value = "";
+    }
+}
+
+function setSource(source) {
+    
+    if (source.startsWith("magnet:")) {
+        setTorrentSource(source)
+    } else {
+        vid.setAttribute("src", source);
     }
 }
 

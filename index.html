@@ -17,7 +17,7 @@
 		<li><label class=info id="client_id"></label></li>
 		<li><label class=info id="ws_text"></label></li>
 		<li>
-			<label class=info for="mp4url">mp4 url:</label>
+			<label class=info for="mp4url">URL:</label>
 			<input id="url" , placeholder="example.com/file.mp4">
 			<button id="watch_button" onclick="newSource()">Watch</button>
 		</li>
@@ -30,6 +30,9 @@
 		<li>
 			<label id="room_link" class=info for="room_link"></label>
 			<button onclick="copyRoomLink()">Copy invite link <i class="far fa-copy"></i> </button>
+		</li>
+		<li>
+			<label class=info id=downloading></label>
 		</li>
 	</ul>
 
@@ -71,4 +74,8 @@
 
 <script type="text/javascript" src="common.js"></script>
 <script type="text/javascript" src="interface.js"></script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script>
+<script type="text/javascript" src="webtorrent.js"></script>
+
 <script type="text/javascript" src="sync.js"></script>

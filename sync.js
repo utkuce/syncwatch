@@ -117,14 +117,14 @@ ws.onmessage = function (event) {
         case "sourceURL":
 
             // { "sourceURL": url}
-            vid.setAttribute("src", message["sourceURL"]);
+            setSource(message["sourceURL"]);
             
             break;
 
         case "newSource":
             
             // { "newSource" : {"url": url} }
-            vid.setAttribute("src", message["newSource"]["url"])
+            setSource(message["newSource"]["url"]);
             
             break;
 

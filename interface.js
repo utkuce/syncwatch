@@ -60,9 +60,27 @@ function newSource() {
 
 function setSource(source) {
     
+    var srcURL = new URL(source);
+    var youtubeEmbed = document.getElementById("youtube_embed");
+
     if (source.startsWith("magnet:")) {
+
         setTorrentSource(source)
+    
+    } else if (srcURL.hostname.endsWith("youtube.com") || 
+        srcURL.hostname.endsWith("youtu.be") ) {
+        
+        log("Detected youtube link, acting accordingly");
+        youtubeEmbed.style.display = "inline";
+        vid.style.display = "none";
+
+        source = source.replace("watch?v", "embed/watch?v");
+        youtubeEmbed.src =  source;
+    
     } else {
+
+        vid.style.display = "block";
+        youtubeEmbed.style.display = "none";
         vid.setAttribute("src", source);
     }
 }
@@ -139,3 +157,9 @@ function newRoom() {
 
     window.location = window.location.href.split("?")[0];
 }
+
+var localVideo = document.getElementById('local_video');
+localVideo.onchange = function() {
+
+    seedFile(localVideo);
+};

@@ -139,3 +139,9 @@ function newRoom() {
 
     window.location = window.location.href.split("?")[0];
 }
+
+var localVideo = document.getElementById('local_video');
+localVideo.onchange = function() {
+
+    seedFile(localVideo);
+};

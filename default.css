@@ -11,13 +11,13 @@ ul {
 	padding: 0;
 	overflow: hidden;
 	background-color: #272e35;
-  }
+}
   
-  li {
+li {
 	float: left;
-  }
+}
   
-  li .info {
+li .info {
 	display: inline-block;
 	color: white;
 	text-align: center;
@@ -25,7 +25,7 @@ ul {
 	padding-bottom: 16px;
 	padding-left: 32px;
 	text-decoration: none;
-  }
+}
 
 .videobox {
 	margin-top: 40px;
@@ -82,14 +82,30 @@ figure {
 	color:red;
 }
 
-button {
+button, .button {
 	direction: rtl;
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 13px;
+	padding: 5px 10px;
+	border-radius: 4px;
+	cursor:pointer;
+}
+
+.file_selectro {
 	background-color: #4CAF50; /* Green */
   	border: none;
   	color: white;
 	padding: 5px 10px;
 	border-radius: 4px;
 	cursor:pointer;
+}
+
+input[type="file"] {
+    display: none;
 }
 
 input {

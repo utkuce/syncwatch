@@ -32,3 +32,25 @@ function setTorrentSource(torrentId) {
         });
     })
 }
+
+var pc_config = {"iceServers": 
+    [{url:'stun:stun.1.google.com:19302'},
+     {url:'turn:numb.viagenie.ca',credential: 'muazkh', username: 'webrtc@live.com'}]};
+
+pc = new RTCPeerConnection(pc_config);
+
+function seedFile(fileSelector) {
+
+    if ('files' in fileSelector && fileSelector.files.length != 0) {
+        var path = fileSelector.files[0].name;
+    }
+
+    log ("Selected file: " + path);
+
+    let client = new WebTorrent()
+    client.seed(fileSelector.files[0], function (torrent) {
+        log("Seeding file");
+        log(torrent.magnetURI) // a buffer of the .torrent file
+        // host it at the url you put after &xs=
+    });
+}

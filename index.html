@@ -14,10 +14,20 @@
 
 	<ul id=top_bar>
 		<li><label class=info id="video_state"></label></li>
-		<li><label class=info id="client_id"></label></li>
+		<li style="display: none"><label class=info id="client_id"></label></li>
 		<li><label class=info id="ws_text"></label></li>
 		<li>
-			<label class=info for="mp4url">URL:</label>
+			<span class=info>
+				<label class="button" for="local_video" class="file_selector">
+					<i class="fas fa-folder"></i> Open File...
+				</label>
+			</span>
+			<input type="file" id="local_video" accept="video/mp4">
+		</li>
+
+		<li><span class=info>or</span></li>
+		<li>
+			<label class=info for="mp4url">Enter URL:</label>
 			<input id="url" , placeholder="example.com/file.mp4">
 			<button id="watch_button" onclick="newSource()">Watch</button>
 		</li>

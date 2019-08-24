@@ -32,6 +32,10 @@
 			<button onclick="copyRoomLink()">Copy invite link <i class="far fa-copy"></i> </button>
 		</li>
 		<li>
+			<label for="fileSelector"><i class="fas fa-folder"></i> Open file: </label>
+			<input id="fileSelector" type="file" accept="video/*"/>
+		</li>
+		<li>
 			<label class=info id=downloading></label>
 		</li>
 	</ul>
@@ -50,8 +54,6 @@
 		</button>
 		<p id=logs class=logs></p>
 	</div>
-
-	<!--<button onclick="vid.load()">Refresh Video</button>-->
 
 	<footer>
 		© 2019 Utku Çelik <br>

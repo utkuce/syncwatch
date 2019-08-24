@@ -32,3 +32,23 @@ function setTorrentSource(torrentId) {
         });
     })
 }
+
+var fileSelector  = document.getElementById('fileSelector');
+fileSelector.addEventListener('change', handleFileSelect, false)
+
+function handleFileSelect (evt) {
+
+  var files = evt.target.files // FileList object
+  var videoFile = files[0];
+
+  client.seed(videoFile, function (torrent) {
+        
+        console.log('Client is seeding ' + torrent.magnetURI);
+
+        vid.setAttribute("src", URL.createObjectURL(videoFile));
+
+        var newSource = JSON.stringify({ "newSource": { "url": torrent.magnetURI} });
+        log("Sending data: " + newSource)
+        ws.send(newSource);
+    });
+}

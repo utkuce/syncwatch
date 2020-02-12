@@ -1,3 +1,6 @@
+# Note: 
+Project is archived and replaced with [syncwatch-web](https://github.com/utkuce/syncwatch-web)
+
 # syncwatch
 
 Syncronizes the position and play/pause state of the `<video>` for all parties viewing the web page to watch a video together. Video sources that are supported are direct mp4 links, magnet URLs (webtorrent<sup>[*]</sup>) and local files but the file has to be an `.mp4`.
